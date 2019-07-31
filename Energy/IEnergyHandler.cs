@@ -2,6 +2,6 @@
 {
 	public interface IEnergyHandler
 	{
-		EnergyHandler Handler { get; }
+		EnergyHandler EnergyHandler { get; }
 	}
 }

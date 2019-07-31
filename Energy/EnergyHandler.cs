@@ -1,16 +1,26 @@
 ﻿using BaseLibrary;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Terraria.ModLoader.IO;
 
 namespace EnergyLibrary
 {
 	public class EnergyHandler
 	{
-		internal long Energy { get; private set; }
-		internal long Capacity { get; private set; }
-		internal long MaxExtract { get; private set; }
-		internal long MaxReceive { get; private set; }
+		public long Energy { get; private set; }
+		public long Capacity { get; private set; }
+		public long MaxExtract { get; private set; }
+		public long MaxReceive { get; private set; }
+
+		public long CurrentDelta { get; private set; }
+		public long AverageDelta { get; private set; }
+
+		private Queue<long> DeltaBuffer = new Queue<long>();
+
+		// todo: make this a config option?
+		private const int MAXIMUM_SAMPLES = 60;
 
 		public Action OnChanged = () => { };
 
@@ -88,22 +98,40 @@ namespace EnergyLibrary
 
 		public long InsertEnergy(long amount)
 		{
-			long energyReceived = Utility.Min(Capacity - Energy, MaxReceive, amount);
-			Energy += energyReceived;
+			CurrentDelta = Utility.Min(Capacity - Energy, MaxReceive, amount);
+			Energy += CurrentDelta;
+
+			DeltaBuffer.Enqueue(CurrentDelta);
+
+			if (DeltaBuffer.Count > MAXIMUM_SAMPLES)
+			{
+				DeltaBuffer.Dequeue();
+				AverageDelta = (long)DeltaBuffer.Average(i => i);
+			}
+			else AverageDelta = CurrentDelta;
 
 			OnChanged?.Invoke();
 
-			return energyReceived;
+			return CurrentDelta;
 		}
 
 		public long ExtractEnergy(long amount)
 		{
-			long energyExtracted = Utility.Min(Energy, MaxExtract, amount);
-			Energy -= energyExtracted;
+			CurrentDelta = -Utility.Min(Energy, MaxExtract, amount);
+			Energy += CurrentDelta;
+
+			DeltaBuffer.Enqueue(CurrentDelta);
+
+			if (DeltaBuffer.Count > MAXIMUM_SAMPLES)
+			{
+				DeltaBuffer.Dequeue();
+				AverageDelta = (long)DeltaBuffer.Average(i => i);
+			}
+			else AverageDelta = CurrentDelta;
 
 			OnChanged?.Invoke();
 
-			return energyExtracted;
+			return CurrentDelta;
 		}
 
 		public TagCompound Save() => new TagCompound
