@@ -9,6 +9,7 @@ namespace EnergyLibrary
 {
 	public class EnergyHandler
 	{
+		// note: these can be ulongs, problem is delta can be both negative and positive
 		public long Energy { get; private set; }
 		public long Capacity { get; private set; }
 		public long MaxExtract { get; private set; }
@@ -18,9 +19,6 @@ namespace EnergyLibrary
 		public long AverageDelta { get; private set; }
 
 		private Queue<long> DeltaBuffer = new Queue<long>();
-
-		// todo: make this a config option?
-		private const int MAXIMUM_SAMPLES = 60;
 
 		public Action OnChanged = () => { };
 
@@ -103,7 +101,7 @@ namespace EnergyLibrary
 
 			DeltaBuffer.Enqueue(CurrentDelta);
 
-			if (DeltaBuffer.Count > MAXIMUM_SAMPLES)
+			if (DeltaBuffer.Count > EnergyLibrary.Instance.GetConfig<EnergyLibraryConfig>().DeltaCacheSize)
 			{
 				DeltaBuffer.Dequeue();
 				AverageDelta = (long)DeltaBuffer.Average(i => i);
@@ -122,7 +120,7 @@ namespace EnergyLibrary
 
 			DeltaBuffer.Enqueue(CurrentDelta);
 
-			if (DeltaBuffer.Count > MAXIMUM_SAMPLES)
+			if (DeltaBuffer.Count > EnergyLibrary.Instance.GetConfig<EnergyLibraryConfig>().DeltaCacheSize)
 			{
 				DeltaBuffer.Dequeue();
 				AverageDelta = (long)DeltaBuffer.Average(i => i);
@@ -150,6 +148,7 @@ namespace EnergyLibrary
 			MaxReceive = tag.GetLong("MaxReceive");
 		}
 
+		// bug: delta doesn't get sent over (but it also is a lot of data so I might just need to send extract/insert events and have it calculated on client/server)
 		public void Write(BinaryWriter writer)
 		{
 			writer.Write(Energy);

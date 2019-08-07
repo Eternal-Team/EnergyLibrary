@@ -1,0 +1,2 @@
+Config.DeltaCacheSize=Delta cache size
+Config.DeltaCacheSizeTooltip=Specifies for how many frames a delta should be calculated\nLarge values make for a smoother delta but decrease performance

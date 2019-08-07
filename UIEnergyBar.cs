@@ -13,7 +13,7 @@ namespace EnergyLibrary
 		public UIEnergyBar(IEnergyHandler energyHandler)
 		{
 			this.energyHandler = energyHandler;
-			GetHoverText += () => $"{Handler.Energy.ToSI("N0")}J/{Handler.Capacity.ToSI("N0")}J\n[c/{(Handler.AverageDelta >= 0 ? Color.Lime : Color.Red).ToHex()}:{Handler.AverageDelta.ToSI("N0")}J/s]";
+			GetHoverText += () => $"{Handler.Energy.ToSI("N0")}J/{Handler.Capacity.ToSI("N0")}J\n[c/{(Handler.AverageDelta >= 0 ? Color.Lime : Color.Red).ToHex()}:{Handler.AverageDelta.ToSI("N0")}W]";
 		}
 
 		// todo: actually draw the energy -> needs a shader
