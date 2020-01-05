@@ -7,7 +7,7 @@ namespace EnergyLibrary
 	{
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 
-		[DefaultValue(60)] [Range(5, 120)] [Label("$Mods.EnergyLibrary.Config.DeltaCacheSize")] [Tooltip("$Mods.EnergyLibrary.Config.DeltaCacheSizeTooltip")]
+		[DefaultValue(60), Range(5, 120), Label("$Mods.EnergyLibrary.Config.DeltaCacheSize"), Tooltip("$Mods.EnergyLibrary.Config.DeltaCacheSizeTooltip")]
 		public int DeltaCacheSize;
 	}
 }

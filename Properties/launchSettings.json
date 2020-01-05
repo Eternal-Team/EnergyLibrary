@@ -3,8 +3,8 @@
     "Terraria": {
       "commandName": "Executable",
       "executablePath": "$(tMLPath)",
-      "workingDirectory": "$(TerrariaSteamPath)"
-    },
+      "commandLineArgs": "-skipselect Itorius:TestWorld",
+      "workingDirectory": "$(TerrariaSteamPath)")
     "TerrariaServer": {
       "commandName": "Executable",
       "executablePath": "$(tMLServerPath)",

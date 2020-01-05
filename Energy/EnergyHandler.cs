@@ -3,13 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 namespace EnergyLibrary
 {
+	// note: consideration for all handlers, cache all handlers in ctor and automatically dispatch receive/extract/other events
+
 	public class EnergyHandler
 	{
-		// note: these can be ulongs, problem is delta can be both negative and positive
 		public long Energy { get; private set; }
 		public long Capacity { get; private set; }
 		public long MaxExtract { get; private set; }
@@ -101,7 +103,7 @@ namespace EnergyLibrary
 
 			DeltaBuffer.Enqueue(CurrentDelta);
 
-			if (DeltaBuffer.Count > EnergyLibrary.Instance.GetConfig<EnergyLibraryConfig>().DeltaCacheSize)
+			if (DeltaBuffer.Count > ModContent.GetInstance<EnergyLibraryConfig>().DeltaCacheSize)
 			{
 				DeltaBuffer.Dequeue();
 				AverageDelta = (long)DeltaBuffer.Average(i => i);
@@ -120,7 +122,7 @@ namespace EnergyLibrary
 
 			DeltaBuffer.Enqueue(CurrentDelta);
 
-			if (DeltaBuffer.Count > EnergyLibrary.Instance.GetConfig<EnergyLibraryConfig>().DeltaCacheSize)
+			if (DeltaBuffer.Count > ModContent.GetInstance<EnergyLibraryConfig>().DeltaCacheSize)
 			{
 				DeltaBuffer.Dequeue();
 				AverageDelta = (long)DeltaBuffer.Average(i => i);
